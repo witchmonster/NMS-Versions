@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "releases": [
+    {
+      "version": "7.10",
+      "family": "Forsaken",
+      "platforms": [
+        "PC",
+        "PS4",
+        "PS5",
+        "Nintendo Switch 1/2",
+        "Xbox One",
+        "Xbox Series X/S",
+        "Xbox Game Pass",
+        "iOS"
+      ],
+      "notesUrl": "https://www.nomanssky.com/forsaken-update/",
+      "rssPublishedAt": "2026-10-28T15:00:00Z"
+    },
+    {
+      "version": "7.11",
+      "family": "Forsaken",
+      "platforms": [
+        "PC",
+        "PS4",
+        "PS5",
+        "Xbox One",
+        "Xbox Series X/S",
+        "Xbox Game Pass"
+      ],
+      "notesUrl": "https://www.nomanssky.com/2026/10/forsaken-7-11/",
+      "rssPublishedAt": "2026-10-29T12:00:00Z"
+    },
+    {
+      "version": "7.12",
+      "family": "Forsaken",
+      "platforms": [
+        "PS4",
+        "PS5",
+        "Xbox One",
+        "Xbox Series X/S",
+        "Xbox Game Pass"
+      ],
+      "notesUrl": "https://www.nomanssky.com/2026/10/forsaken-7-12/",
+      "rssPublishedAt": "2026-10-30T12:00:00Z"
+    },
+    {
+      "version": "7.13",
+      "family": "Forsaken",
+      "platforms": [
+        "PC"
+      ],
+      "notesUrl": "https://www.nomanssky.com/2026/11/forsaken-7-13/",
+      "rssPublishedAt": "2026-11-02T12:00:00Z"
+    }
+  ]
+}
