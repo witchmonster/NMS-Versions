@@ -1,50 +1,76 @@
-# No Man's Sky releases
+# NMS Windows build index
 
-Official releases on all platforms since 7.10 inclusive. `nms-versions.json` contains
-`schemaVersion` and `releases`: `version`, named `family`, actual official `platforms`, `notesUrl`,
-and available UTC ISO 8601 timestamps. Unknown fields stay absent.
+[Public JSON](https://witchmonster.github.io/NMS-Versions/nms-versions.json) maps full
+NMS EXE build numbers to public versions and named update families since 7.10.
+The collector reads official GOG public Windows default-branch metadata. The
+approved NMS-specific rule treats the final decimal component of a developer
+label such as `7.11_Forsaken_183877` as EXE build `183877`. This interpretation
+establishes a version label; it grants no decoder qualification or cross-store
+binary compatibility and supplies no Steam build ID.
 
-`rssPublishedAt` preserves Hello Games RSS `pubDate`; it does not prove the
-original announcement or deployment time. `announcedAt` uses explicit official
-publication metadata from retained notes/announcement HTML, never modified time.
-Notes HTML is optional for RSS/platform facts; missing metadata stays absent.
-`deployedAt` requires an actual
-official Steam public Windows deployment record. `steamBuildId` requires an
-explicit exact notes/build association and consistent deployment time within
-24 hours before through 48 hours after the original announcement. Time alone
-never joins identities; conflicting or insufficient bindings stay privately
-unmapped while independent valid hotfix builds remain. No supported keyless
-Steam history source currently supplies those records, so build fields remain
-absent. No executable mapping or compatibility
-qualification follows from a post, timestamp, or build identity. An optional
-`builds` array retains each independently supported `steamBuildId`/`deployedAt`
-pair with its actual `distribution` and `platform`; identical bindings deduplicate.
+## JSON
 
-The collector uses the [Hello Games release log](https://www.nomanssky.com/release-log/)
-for versions/families/platform lists and linked notes, and its
-[RSS feed](https://www.nomanssky.com/feed/) for publisher dates. A major-update
-date requires a release-log-identified major update and one exact-family blog
-announcement linking to those notes. A patch never inherits that blog's date.
-The documented [Steam news API](https://partner.steamgames.com/doc/webapi/ISteamNews)
-supplies news dates, not deployment history; publisher-key build APIs are unavailable.
-Console-only releases stay in the catalogue with their actual platform lists;
-a Windows build never binds a release without PC support. Community/manual/AI
-mappings never enter the output. A future app consumer filters its own platform.
+Schema 2 uses namespace `nms.gog.windows.exe` and a `builds` array. Each row has
+`executableBuild` (full decimal string), `version`, `family`, `gogPublishedAt`
+(UTC ISO 8601), and optional official Hello Games `notesUrl`. GOG publication
+time describes that GOG build record, not an original announcement or Steam
+deployment. Unknown keys remain unknown; callers must use exact EXE numbers,
+never GOG IDs, Steam IDs, truncated values or version ranges.
 
-Game Data refreshes with the accepted app tool:
+## Refresh
+
+Python 3.12 or newer and its standard library suffice. Run from this repository:
 
 ```powershell
-python -B src/tools/Collect-NMSPublicVersions.py --work-root target/versions-refresh
+python -B collect.py --output nms-versions.json
+python -B test_collect.py
 ```
 
-Use an installed Python 3 interpreter from the app checkout. The command requires
-a fresh owned `target` path and writes `public/nms-versions.json`, `public/README.md`
-and private captures/UNMAPPED diagnostics. Game Data checks current user/repo edits,
-then adopts only those two public files after review. The tool never overwrites
-this project or initializes Git. Game Data may maintain Git here only after the
-user initializes an independent repo and its resolved Git root equals this folder.
+The collector verifies product 1446213994, public Windows default branch,
+generation 2, complete developer labels and explicit publication timezones. It
+retains accepted mappings that disappear from GOG's rolling public response;
+`total_count` does not describe the returned public history. Conflicts, malformed
+responses and request failures preserve the last good file. Unchanged facts
+preserve its exact bytes and modification time. Atomic staging stays under
+`target`. The collector performs no Git operation.
 
-The user creates a GitHub repository, initializes and pushes this folder, then
-enables Settings > Pages > Deploy from a branch > main > /(root). The JSON URL
-remains `<YOUR_PAGES_BASE_URL>/nms-versions.json` until the user supplies it.
-No app network integration or Pages publication occurs during collection.
+The former schema-1 release catalogue contributes existing official notes links
+only during migration; it supplies no EXE mappings, console rows or GOG dates.
+Later records without known notes links omit that optional field. The collector
+does not guess notes URLs or associate builds by nearby dates.
+
+For retained-source replay, place the captured official response under `target`:
+
+```powershell
+python -B collect.py --output target/proposed.json --history nms-versions.json --source-file target/gog-builds.json
+```
+
+## Daily maintenance and publication
+
+Game Data reuses its existing daily automation and accepted collector. Before
+refresh, Game Data verifies this exact resolved independent repository root,
+`main`, a clean worktree/index, no linked root or output paths, and origin
+`https://github.com/witchmonster/NMS-Versions.git`. Game Data preserves unexpected
+changes and reports an actionable refusal through CTO/CAO; Game Data never
+initializes a repository, resets user work, replaces a remote or edits engineering
+source/tests. Engineering delivers collector changes through independent review
+and main integration before Game Data runs them.
+
+Game Data runs the refresh command above. `changed: false` requires no commit or
+push and stays quiet. After `changed: true`, Game Data verifies the generated JSON
+and confirms that only `nms-versions.json` and, when necessary, `README.md` changed.
+Game Data rejects any unexpected staged or unstaged path before these commands:
+
+```powershell
+git add -- nms-versions.json README.md
+git diff --cached --check
+git commit -m "Refresh NMS Windows build mappings"
+git push origin main
+```
+
+The existing GitHub Pages main/root configuration rebuilds automatically after a
+push. Initial publication requires an ordinary HTTP check of the public JSON and
+its numeric mappings. Daily index maintenance preserves converter-only alert
+rules and grants no extraction, converter execution, game-data adoption or app
+source authority. The app consumes this index through its separate asynchronous
+validated provider, cache and bundled offline fallback; it makes no GOG request.
