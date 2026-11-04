@@ -7,7 +7,7 @@ Windows build-to-version mappings for No Man’s Sky, starting with Forsaken 7.1
 | File | Contents |
 |---|---|
 | [nms-versions.json](https://witchmonster.github.io/NMS-Versions/nms-versions.json) | Windows EXE build-to-version mappings |
-| [nms-compatibility.json](https://witchmonster.github.io/NMS-Versions/nms-compatibility.json) | Reviewed compatibility assessments; currently empty |
+| [nms-compatibility.json](https://witchmonster.github.io/NMS-Versions/nms-compatibility.json) | Reviewed assessments for exact game builds and admitted baselines |
 
 ## Sources
 
