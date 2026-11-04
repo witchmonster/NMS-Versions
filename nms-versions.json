@@ -1,57 +1,27 @@
 {
-  "schemaVersion": 1,
-  "releases": [
+  "schemaVersion": 2,
+  "namespace": "nms.gog.windows.exe",
+  "builds": [
     {
+      "executableBuild": "183791",
       "version": "7.10",
       "family": "Forsaken",
-      "platforms": [
-        "PC",
-        "PS4",
-        "PS5",
-        "Nintendo Switch 1/2",
-        "Xbox One",
-        "Xbox Series X/S",
-        "Xbox Game Pass",
-        "iOS"
-      ],
-      "notesUrl": "https://www.nomanssky.com/forsaken-update/",
-      "rssPublishedAt": "2026-10-28T15:00:00Z"
+      "gogPublishedAt": "2026-10-28T10:57:54Z",
+      "notesUrl": "https://www.nomanssky.com/forsaken-update/"
     },
     {
+      "executableBuild": "183877",
       "version": "7.11",
       "family": "Forsaken",
-      "platforms": [
-        "PC",
-        "PS4",
-        "PS5",
-        "Xbox One",
-        "Xbox Series X/S",
-        "Xbox Game Pass"
-      ],
-      "notesUrl": "https://www.nomanssky.com/2026/10/forsaken-7-11/",
-      "rssPublishedAt": "2026-10-29T12:00:00Z"
+      "gogPublishedAt": "2026-10-29T17:16:02Z",
+      "notesUrl": "https://www.nomanssky.com/2026/10/forsaken-7-11/"
     },
     {
-      "version": "7.12",
-      "family": "Forsaken",
-      "platforms": [
-        "PS4",
-        "PS5",
-        "Xbox One",
-        "Xbox Series X/S",
-        "Xbox Game Pass"
-      ],
-      "notesUrl": "https://www.nomanssky.com/2026/10/forsaken-7-12/",
-      "rssPublishedAt": "2026-10-30T12:00:00Z"
-    },
-    {
+      "executableBuild": "184271",
       "version": "7.13",
       "family": "Forsaken",
-      "platforms": [
-        "PC"
-      ],
-      "notesUrl": "https://www.nomanssky.com/2026/11/forsaken-7-13/",
-      "rssPublishedAt": "2026-11-02T12:00:00Z"
+      "gogPublishedAt": "2026-11-02T16:20:22Z",
+      "notesUrl": "https://www.nomanssky.com/2026/11/forsaken-7-13/"
     }
   ]
 }
