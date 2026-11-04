@@ -7,6 +7,7 @@ Windows build-to-version mappings for No Man’s Sky, starting with Forsaken 7.1
 | File | Contents |
 |---|---|
 | [nms-versions.json](https://witchmonster.github.io/NMS-Versions/nms-versions.json) | Version index; EXE mappings await publication |
+| [nms-compatibility.json](https://witchmonster.github.io/NMS-Versions/nms-compatibility.json) | Reviewed compatibility assessments (publication pending) |
 
 ## Sources
 
@@ -20,7 +21,7 @@ For example, `7.13_Forsaken_184271` identifies version **7.13**, update **Forsak
 - The collector adds public Windows mappings and preserves historical entries.
 - Unchanged results preserve the existing file; failed refreshes preserve the last good index.
 - GitHub Pages deploys automatically after each push.
-- Daily refresh automation and reviewed compatibility assessments await publication.
+- Live version refresh remains pending.
 - Compatibility assessments require separate review; automatic refreshes never generate them.
 
 ## Limits
