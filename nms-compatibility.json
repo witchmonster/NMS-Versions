@@ -1,4 +1,49 @@
 {
   "schemaVersion": 1,
-  "assessments": []
+  "assessments": [
+    {
+      "baseline": {
+        "identityVersion": 1,
+        "decoderSourcesSha256": "6cba05c2615f105b883a854124cad14095519a6e52aa053fdfe2355b1f7f3e37",
+        "datasetId": "nms-183877-steam-26295378-r5",
+        "datasetManifestSha256": "91c62ed4e38c7d22c203f10a23c7b29ae37a35aba4a8509613c141187c32bb83",
+        "datasetContentSha256": "3d95f04ea51e3d4258d57a22dafa9252d6a194da01d994de913326fb774c6774",
+        "sourceProfileId": "stock-183877",
+        "sourceResourceRevision": "GCGAMEPLAYGLOBALS.GLOBAL.MBIN|C311689E1289005E30430E1B04EDF06B27175C68064D101D43A9F52AF9135D0F\r\nGCSOLARGENERATIONGLOBALS.GLOBAL.MBIN|7E51F37C95ACA505B11C959C2AA5A41AC2FC50864A62CC9AEBB5B713663BD052|count-catalogue=cbdc24d9898220fad0b4768fd840720a2b01b5a60f8bb9ccb4305e6b09605e95"
+      },
+      "target": {
+        "distribution": "Steam",
+        "steamBuildId": "26295378",
+        "executableBuild": "183877",
+        "productBuild": "183877",
+        "executableSha256": "d393c6782d29e1915854c0d5cf42505c8093740c05dc53705dbed7e0d1d4ac37"
+      },
+      "scope": "existing-admitted-browsing",
+      "status": "NotVerified",
+      "reasonKey": "shell.game-version.reason.not-verified",
+      "explanation": "Retained evidence covers ordinary stock generation in the reviewed scope. Saved-address compatibility for this exact build remains unverified."
+    },
+    {
+      "baseline": {
+        "identityVersion": 1,
+        "decoderSourcesSha256": "6cba05c2615f105b883a854124cad14095519a6e52aa053fdfe2355b1f7f3e37",
+        "datasetId": "nms-183877-steam-26295378-r5",
+        "datasetManifestSha256": "91c62ed4e38c7d22c203f10a23c7b29ae37a35aba4a8509613c141187c32bb83",
+        "datasetContentSha256": "3d95f04ea51e3d4258d57a22dafa9252d6a194da01d994de913326fb774c6774",
+        "sourceProfileId": "stock-183877",
+        "sourceResourceRevision": "GCGAMEPLAYGLOBALS.GLOBAL.MBIN|C311689E1289005E30430E1B04EDF06B27175C68064D101D43A9F52AF9135D0F\r\nGCSOLARGENERATIONGLOBALS.GLOBAL.MBIN|7E51F37C95ACA505B11C959C2AA5A41AC2FC50864A62CC9AEBB5B713663BD052|count-catalogue=cbdc24d9898220fad0b4768fd840720a2b01b5a60f8bb9ccb4305e6b09605e95"
+      },
+      "target": {
+        "distribution": "Steam",
+        "steamBuildId": "26386568",
+        "executableBuild": "184271",
+        "productBuild": "184271",
+        "executableSha256": "a77fc29877789c3da9181afeb5941b9b85a27d3df24919a24403cf8e194c6109"
+      },
+      "scope": "existing-admitted-browsing",
+      "status": "NotVerified",
+      "reasonKey": "shell.game-version.reason.not-verified",
+      "explanation": "Generation and saved-address compatibility with this exact build remain unverified for the admitted decoder and dataset."
+    }
+  ]
 }
