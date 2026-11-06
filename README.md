@@ -18,11 +18,11 @@ For example, `7.13_Forsaken_184271` identifies version **7.13**, update **Forsak
 
 ## Maintenance
 
-- The collector adds public Windows mappings and preserves historical entries.
-- Unchanged results preserve the existing file; failed refreshes preserve the last good index.
-- GitHub Pages deploys automatically after each push.
-- Daily version refresh is configured and awaits its first verified run.
-- Compatibility assessments require separate review; automatic refreshes never generate them.
+- The accepted collector refreshes public Windows mappings and preserves historical entries.
+- The NMS Game Data owner maintains the existing daily run for discovery, scanner invocation and publication. The maintained NMSCompatibilityMaintenance.py command in the NMS repository composes that operation; its initial reviewed-Main and end-to-end adoption remain pending.
+- The scanner generates assessments for exact game identities and admitted app baselines. Tech Lead independently reviews code and publication-rule changes before their initial adoption; NMS Game Data publishes routine compatible updates without a manually written verdict or per-build approval after adoption.
+- Unavailable or incomplete game files remain pending for later scheduled runs. Unchanged results preserve the public files and create no unnecessary assessment, commit or push.
+- The maintained publisher verifies both actual Pages JSON endpoints after pushing. Authentication may require an explicit Pages build; a successful push alone does not prove public delivery.
 
 ## Limits
 
