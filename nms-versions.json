@@ -22,6 +22,12 @@
       "family": "Forsaken",
       "gogPublishedAt": "2026-11-02T16:20:22Z",
       "notesUrl": "https://www.nomanssky.com/2026/11/forsaken-7-13/"
+    },
+    {
+      "executableBuild": "185034",
+      "version": "7.14",
+      "family": "Forsaken",
+      "gogPublishedAt": "2026-11-09T12:56:01Z"
     }
   ]
 }
