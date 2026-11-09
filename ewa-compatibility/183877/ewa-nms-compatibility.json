@@ -20,6 +20,13 @@
       "steamBuildId": "26386568",
       "executableSha256": "a77fc29877789c3da9181afeb5941b9b85a27d3df24919a24403cf8e194c6109",
       "status": "VerifiedCompatible"
+    },
+    {
+      "distribution": "Steam",
+      "executableBuild": "185034",
+      "steamBuildId": "26540391",
+      "executableSha256": "092236962ee050e419424699b5c343a0173f7773d5ad0866b7ec366d334c07d4",
+      "status": "VerifiedCompatible"
     }
   ]
 }
