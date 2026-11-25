@@ -45,6 +45,17 @@ def family(value):
     return value
 
 
+def validate_display_name(value):
+    if (not isinstance(value, str) or not value or value != value.strip()
+            or len(value.encode("utf-16-le")) // 2 > 128
+            or any(ord(c) < 32 or 127 <= ord(c) <= 159 for c in value)):
+        raise ValueError("Invalid curated display name")
+
+
+def technical_mapping(row):
+    return {name: value for name, value in row.items() if name != "displayName"}
+
+
 def notes_url(value):
     if not isinstance(value, str):
         raise ValueError("Invalid official notes URL")
@@ -77,7 +88,7 @@ def validate(index):
         required = {"version", "family", "gogPublishedAt"}
         if not exact_row:
             required.add("executableBuild")
-        if not isinstance(row, dict) or not required <= row.keys() <= required | {"notesUrl"}:
+        if not isinstance(row, dict) or not required <= row.keys() <= required | {"notesUrl", "displayName"}:
             raise ValueError("Unexpected build fields")
         if not isinstance(key, str) or not IDENTIFIER.fullmatch(key) or key in result:
             raise ValueError("Invalid or duplicate full EXE build")
@@ -89,6 +100,8 @@ def validate(index):
             raise ValueError("Public timestamps must use UTC ISO 8601")
         if "notesUrl" in row:
             notes_url(row["notesUrl"])
+        if "displayName" in row:
+            validate_display_name(row["displayName"])
         result[key] = {**row, "executableBuild": key}
 
     for row in legacy:
@@ -169,9 +182,12 @@ def produce(raw, history=None):
     if not found:
         raise ValueError("No public Windows mappings in the source response")
     for key, row in found.items():
-        if key in retained and retained[key] != row:
+        prior = retained.get(key)
+        if prior is None:
+            retained[key] = row
+            continue
+        if technical_mapping(prior) != row:
             raise ValueError("Source conflicts with retained historical mapping")
-        retained[key] = row
     result = {"schemaVersion": 2, "namespace": NAMESPACE, "builds": []}
     exact = {}
     for key in sorted(retained, key=int):
@@ -220,6 +236,19 @@ def refresh(output, history=None, source_file=None):
     old = read(history)
     raw = Path(source_file).read_bytes() if source_file else fetch()
     index = produce(raw, old)
+    if history != output and before is not None:
+        current_rows, _ = previous(before)
+        refreshed_rows = {row["executableBuild"]: row for row in index["builds"]}
+        refreshed_rows.update(index.get("exactBuilds", {}))
+        for key, row in current_rows.items():
+            if "displayName" not in row:
+                continue
+            refreshed = refreshed_rows.get(key)
+            if refreshed is None:
+                raise ValueError("Separate history would remove a curated build")
+            if technical_mapping({**refreshed, "executableBuild": key}) != technical_mapping(row):
+                raise ValueError("Separate history conflicts with current curated build")
+            refreshed["displayName"] = row["displayName"]
     content = (json.dumps(index, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     if len(content) > MAX_BYTES:
         raise ValueError("Public version index exceeds the client limit")

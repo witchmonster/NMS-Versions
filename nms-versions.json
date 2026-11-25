@@ -1,6 +1,7 @@
 {
   "builds": [
     {
+      "displayName": "Forsaken 7.10",
       "executableBuild": "183791",
       "family": "Forsaken",
       "gogPublishedAt": "2026-10-28T10:57:54Z",
@@ -8,6 +9,7 @@
       "version": "7.10"
     },
     {
+      "displayName": "Forsaken 7.11",
       "executableBuild": "183877",
       "family": "Forsaken",
       "gogPublishedAt": "2026-10-29T17:16:02Z",
@@ -15,6 +17,7 @@
       "version": "7.11"
     },
     {
+      "displayName": "Forsaken 7.13",
       "executableBuild": "184271",
       "family": "Forsaken",
       "gogPublishedAt": "2026-11-02T16:20:22Z",
@@ -22,12 +25,14 @@
       "version": "7.13"
     },
     {
+      "displayName": "Forsaken 7.14",
       "executableBuild": "185034",
       "family": "Forsaken",
       "gogPublishedAt": "2026-11-09T12:56:01Z",
       "version": "7.14"
     },
     {
+      "displayName": "Holiday Expeditions 7.15",
       "executableBuild": "186686",
       "family": "HolidayExpeditions2026",
       "gogPublishedAt": "2026-11-25T10:54:29Z",
@@ -36,6 +41,7 @@
   ],
   "exactBuilds": {
     "186923": {
+      "displayName": "Holiday Expeditions 7.15.1",
       "family": "HolidayExpeditions2026",
       "gogPublishedAt": "2026-11-25T15:51:32Z",
       "version": "7.15.1"

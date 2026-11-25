@@ -161,6 +161,84 @@ class Collector(unittest.TestCase):
             with self.subTest(key=key, row=row), self.assertRaises(ValueError):
                 collect.validate({**accepted, "exactBuilds": {key: row}})
 
+    def test_refresh_preserves_curated_names_and_does_not_invent_new_ones(self):
+        legacy = item()
+        exact = item("7.15.1_HolidayExpeditions2026_186923")
+        catalog = collect.produce(raw(legacy, exact))
+        catalog["builds"][0]["displayName"] = "Forsaken 7.11"
+        catalog["exactBuilds"]["186923"]["displayName"] = "Holiday Expeditions — Encore"
+        self.output.write_bytes(encoded(catalog))
+        before = self.output.read_bytes(), self.output.stat().st_mtime_ns
+        response = raw(legacy, exact)
+        with patch.object(collect, "fetch", return_value=response):
+            changed, result = collect.refresh(self.output)
+        self.assertFalse(changed)
+        self.assertEqual(result, catalog)
+        self.assertEqual((self.output.read_bytes(), self.output.stat().st_mtime_ns), before)
+
+        new = item("7.15_HolidayExpeditions2026_186686", displayName="Untrusted source label")
+        with patch.object(collect, "fetch", return_value=raw(new, exact)):
+            changed, result = collect.refresh(self.output)
+        self.assertTrue(changed)
+        self.assertEqual(collect.lookup(result, "183877")["displayName"], "Forsaken 7.11")
+        self.assertEqual(collect.lookup(result, "186923")["displayName"], "Holiday Expeditions — Encore")
+        self.assertNotIn("displayName", collect.lookup(result, "186686"))
+
+        with patch.object(collect, "fetch", return_value=raw(item("7.15.2_HolidayExpeditions2026_186923"))):
+            with self.assertRaisesRegex(ValueError, "conflicts with retained"):
+                collect.refresh(self.output)
+        self.assertEqual(collect.decode(self.output.read_bytes()), result)
+
+    def test_alternate_history_cannot_erase_current_names(self):
+        old = collect.produce(raw(item()))
+        history = self.root / "history.json"
+        history.write_bytes(encoded(old))
+        renamed = copy.deepcopy(old)
+        renamed["builds"][0]["displayName"] = "Forsaken — Curated"
+        self.output.write_bytes(encoded(renamed))
+        with patch.object(collect, "fetch", return_value=raw(item())):
+            changed, result = collect.refresh(self.output, history)
+        self.assertFalse(changed)
+        self.assertEqual(result, renamed)
+
+        history.write_bytes(encoded(collect.produce(raw(item("7.13_Forsaken_184271")))))
+        with patch.object(collect, "fetch", return_value=raw(item("7.13_Forsaken_184271"))):
+            with self.assertRaisesRegex(ValueError, "would remove a curated build"):
+                collect.refresh(self.output, history)
+        self.assertEqual(self.output.read_bytes(), encoded(renamed))
+
+    def test_alternate_history_cannot_relabel_a_changed_technical_mapping(self):
+        for current, replacement, key in [
+            (item(), item("7.13_Forsaken_183877"), "183877"),
+            (
+                item("7.15.1_HolidayExpeditions2026_186923"),
+                item("7.15.2_HolidayExpeditions2026_186923"),
+                "186923",
+            ),
+        ]:
+            with self.subTest(build=key):
+                catalog = collect.produce(raw(current))
+                row = catalog["builds"][0] if catalog["builds"] else catalog["exactBuilds"][key]
+                row["displayName"] = "Curated original name"
+                self.output.write_bytes(encoded(catalog))
+                before = self.output.read_bytes(), self.output.stat().st_mtime_ns
+                history = self.root / "history.json"
+                history.write_bytes(encoded(collect.produce(raw(replacement))))
+                with patch.object(collect, "fetch", return_value=raw(replacement)):
+                    with self.assertRaisesRegex(ValueError, "conflicts with current curated build"):
+                        collect.refresh(self.output, history)
+                self.assertEqual((self.output.read_bytes(), self.output.stat().st_mtime_ns), before)
+
+    def test_invalid_curated_names_refuse_in_both_row_types(self):
+        catalog = collect.produce(raw(item(), item("7.15.1_HolidayExpeditions2026_186923")))
+        for value in ("", " ", " padded", "line\nbreak", "\x85hidden", "x" * 129, "🌑" * 65, 12, None):
+            for group in ("builds", "exactBuilds"):
+                bad = copy.deepcopy(catalog)
+                row = bad["builds"][0] if group == "builds" else bad["exactBuilds"]["186923"]
+                row["displayName"] = value
+                with self.subTest(group=group, value=value), self.assertRaisesRegex(ValueError, "Invalid curated display name"):
+                    collect.validate(bad)
+
     def test_order_does_not_change_content(self):
         first, second = item(), item("7.13_Forsaken_184271")
         self.assertEqual(collect.produce(raw(first, second)), collect.produce(raw(second, first)))
