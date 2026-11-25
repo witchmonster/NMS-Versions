@@ -1,32 +1,39 @@
 {
-  "schemaVersion": 2,
-  "reference": {
-    "distribution": "Steam",
-    "executableBuild": "183877",
-    "steamBuildId": "26295378",
-    "executableSha256": "d393c6782d29e1915854c0d5cf42505c8093740c05dc53705dbed7e0d1d4ac37"
-  },
   "assessments": [
     {
       "distribution": "Steam",
       "executableBuild": "183877",
-      "steamBuildId": "26295378",
       "executableSha256": "d393c6782d29e1915854c0d5cf42505c8093740c05dc53705dbed7e0d1d4ac37",
-      "status": "VerifiedCompatible"
+      "status": "VerifiedCompatible",
+      "steamBuildId": "26295378"
     },
     {
       "distribution": "Steam",
       "executableBuild": "184271",
-      "steamBuildId": "26386568",
       "executableSha256": "a77fc29877789c3da9181afeb5941b9b85a27d3df24919a24403cf8e194c6109",
-      "status": "VerifiedCompatible"
+      "status": "VerifiedCompatible",
+      "steamBuildId": "26386568"
     },
     {
       "distribution": "Steam",
       "executableBuild": "185034",
-      "steamBuildId": "26540391",
       "executableSha256": "092236962ee050e419424699b5c343a0173f7773d5ad0866b7ec366d334c07d4",
-      "status": "VerifiedCompatible"
+      "status": "VerifiedCompatible",
+      "steamBuildId": "26540391"
+    },
+    {
+      "distribution": "Steam",
+      "executableBuild": "186923",
+      "executableSha256": "966bad4d8a665dd65a593c5e55f0a8e8b5029ffaae176f016c4b283a46630075",
+      "status": "VerifiedCompatible",
+      "steamBuildId": "26924890"
     }
-  ]
+  ],
+  "reference": {
+    "distribution": "Steam",
+    "executableBuild": "183877",
+    "executableSha256": "d393c6782d29e1915854c0d5cf42505c8093740c05dc53705dbed7e0d1d4ac37",
+    "steamBuildId": "26295378"
+  },
+  "schemaVersion": 2
 }
