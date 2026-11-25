@@ -137,6 +137,30 @@ class Collector(unittest.TestCase):
             collect.refresh(self.output)
         self.assertEqual(self.output.read_bytes(), b"owner edit")
 
+    def test_named_patch_is_additive_and_preserves_previous_legacy_rows(self):
+        previous = collect.produce(raw(item()))
+        patch = item("7.15.1_HolidayExpeditions2026_186923")
+        result = collect.produce(raw(patch), encoded(previous))
+        self.assertEqual(result["builds"], previous["builds"])
+        self.assertEqual(result["exactBuilds"]["186923"], {
+            "version": "7.15.1", "family": "HolidayExpeditions2026",
+            "gogPublishedAt": "2026-10-29T17:16:02Z",
+        })
+        self.assertEqual(collect.lookup(result, "186923")["version"], "7.15.1")
+        self.assertEqual(collect.produce(raw(item()), encoded(result)), result)
+        self.assertEqual(collect.produce(raw(patch), encoded(result)), result)
+        with self.assertRaises(ValueError):
+            collect.produce(raw(item("7.15_HolidayExpeditions2026_186923")), encoded(result))
+
+    def test_exact_builds_reject_ambiguous_or_legacy_only_labels(self):
+        accepted = collect.produce(raw(item(), item("7.15.1_HolidayExpeditions2026_186923")))
+        exact = accepted["exactBuilds"]["186923"]
+        for key, row in (("183877", exact), ("0186923", exact),
+                         ("186923", {**exact, "version": "7.15"}),
+                         ("186923", {**exact, "version": "7.15.1.2"})):
+            with self.subTest(key=key, row=row), self.assertRaises(ValueError):
+                collect.validate({**accepted, "exactBuilds": {key: row}})
+
     def test_order_does_not_change_content(self):
         first, second = item(), item("7.13_Forsaken_184271")
         self.assertEqual(collect.produce(raw(first, second)), collect.produce(raw(second, first)))

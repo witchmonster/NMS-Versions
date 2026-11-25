@@ -20,12 +20,12 @@ ROOT = Path(__file__).resolve().parent
 SOURCE = "https://content-system.gog.com/products/1446213994/os/windows/builds?generation=2"
 NAMESPACE = "nms.gog.windows.exe"
 MAX_BYTES = 2 * 1024 * 1024
-LABEL = re.compile(r"(\d+\.\d+)_([^_]+)_([1-9]\d{0,19})")
-IDENTIFIER = re.compile(r"[1-9]\d{0,19}")
+LABEL = re.compile(r"([0-9]+\.[0-9]+(?:\.[0-9]+)?)_([^_]+)_([1-9][0-9]{0,19})")
+IDENTIFIER = re.compile(r"[1-9][0-9]{0,19}")
 
 
 def version(value):
-    if not isinstance(value, str) or not re.fullmatch(r"\d+\.\d+", value):
+    if not isinstance(value, str) or len(value) > 16 or not re.fullmatch(r"[0-9]+\.[0-9]+(?:\.[0-9]+)?", value):
         raise ValueError("Invalid public version")
     return tuple(map(int, value.split(".")))
 
@@ -40,7 +40,7 @@ def publication(value):
 
 
 def family(value):
-    if not isinstance(value, str) or not value or value != value.strip() or len(value) > 80 or any(ord(c) < 32 for c in value):
+    if not isinstance(value, str) or not value or value != value.strip() or len(value.encode("utf-16-le")) // 2 > 64 or any(ord(c) < 32 or 127 <= ord(c) <= 159 for c in value):
         raise ValueError("Invalid named update family")
     return value
 
@@ -61,26 +61,40 @@ def decode(raw):
 
 
 def validate(index):
-    if not isinstance(index, dict) or set(index) != {"schemaVersion", "namespace", "builds"} or type(index["schemaVersion"]) is not int or index["schemaVersion"] != 2 or index["namespace"] != NAMESPACE:
+    required = {"schemaVersion", "namespace", "builds"}
+    if (not isinstance(index, dict) or not required <= index.keys() <= required | {"exactBuilds"}
+            or type(index["schemaVersion"]) is not int or index["schemaVersion"] != 2
+            or index["namespace"] != NAMESPACE):
         raise ValueError("Expected the GOG Windows EXE index namespace/schema")
-    if not isinstance(index["builds"], list) or not index["builds"]:
+    legacy, exact = index["builds"], index.get("exactBuilds", {})
+    if not isinstance(legacy, list) or len(legacy) > 1024 or not isinstance(exact, dict):
+        raise ValueError("Invalid or oversized Windows build mappings")
+    if not legacy and not exact:
         raise ValueError("A functional index needs build mappings")
     result = {}
-    required = {"executableBuild", "version", "family", "gogPublishedAt"}
-    for row in index["builds"]:
-        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - {"notesUrl"}:
+
+    def add(key, row, exact_row):
+        required = {"version", "family", "gogPublishedAt"}
+        if not exact_row:
+            required.add("executableBuild")
+        if not isinstance(row, dict) or not required <= row.keys() <= required | {"notesUrl"}:
             raise ValueError("Unexpected build fields")
-        key = row["executableBuild"]
         if not isinstance(key, str) or not IDENTIFIER.fullmatch(key) or key in result:
             raise ValueError("Invalid or duplicate full EXE build")
-        if version(row["version"]) < (7, 10):
-            raise ValueError("Index contains a version before 7.10")
+        parts = version(row["version"])
+        if parts[:2] < (7, 10) or len(parts) != (3 if exact_row else 2):
+            raise ValueError("Version must match the legacy or exact-build index")
         family(row["family"])
         if publication(row["gogPublishedAt"]) != row["gogPublishedAt"]:
             raise ValueError("Public timestamps must use UTC ISO 8601")
         if "notesUrl" in row:
             notes_url(row["notesUrl"])
-        result[key] = dict(row)
+        result[key] = {**row, "executableBuild": key}
+
+    for row in legacy:
+        add(row.get("executableBuild") if isinstance(row, dict) else None, row, False)
+    for key, row in exact.items():
+        add(key, row, True)
     return result
 
 
@@ -144,7 +158,7 @@ def produce(raw, history=None):
         patch, update, exe = match.groups()
         family(update)
         published = publication(item.get("date_published"))
-        if version(patch) < (7, 10):
+        if version(patch)[:2] < (7, 10):
             continue
         row = {"executableBuild": exe, "version": patch, "family": update, "gogPublishedAt": published}
         if (patch, update) in notes:
@@ -158,8 +172,16 @@ def produce(raw, history=None):
         if key in retained and retained[key] != row:
             raise ValueError("Source conflicts with retained historical mapping")
         retained[key] = row
-    result = {"schemaVersion": 2, "namespace": NAMESPACE,
-              "builds": [retained[key] for key in sorted(retained, key=int)]}
+    result = {"schemaVersion": 2, "namespace": NAMESPACE, "builds": []}
+    exact = {}
+    for key in sorted(retained, key=int):
+        row = retained[key]
+        if len(version(row["version"])) == 3:
+            exact[key] = {name: value for name, value in row.items() if name != "executableBuild"}
+        else:
+            result["builds"].append(row)
+    if exact or (history is not None and "exactBuilds" in decode(history)):
+        result["exactBuilds"] = exact
     validate(result)
     return result
 
@@ -199,6 +221,8 @@ def refresh(output, history=None, source_file=None):
     raw = Path(source_file).read_bytes() if source_file else fetch()
     index = produce(raw, old)
     content = (json.dumps(index, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    if len(content) > MAX_BYTES:
+        raise ValueError("Public version index exceeds the client limit")
     # Preserve exact bytes and avoid daily commits when facts/order do not change.
     if before is not None and decode(before) == index:
         if read(output) != before or read(history) != old:
@@ -229,7 +253,7 @@ def main():
     parser.add_argument("--source-file", type=Path, help="Replay captured official GOG response; no network request")
     args = parser.parse_args()
     changed, index = refresh(args.output, args.history, args.source_file)
-    print(json.dumps({"changed": changed, "buildCount": len(index["builds"])}))
+    print(json.dumps({"changed": changed, "buildCount": len(index["builds"]) + len(index.get("exactBuilds", {}))}))
 
 
 if __name__ == "__main__":
