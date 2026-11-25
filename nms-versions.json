@@ -1,33 +1,46 @@
 {
-  "schemaVersion": 2,
-  "namespace": "nms.gog.windows.exe",
   "builds": [
     {
       "executableBuild": "183791",
-      "version": "7.10",
       "family": "Forsaken",
       "gogPublishedAt": "2026-10-28T10:57:54Z",
-      "notesUrl": "https://www.nomanssky.com/forsaken-update/"
+      "notesUrl": "https://www.nomanssky.com/forsaken-update/",
+      "version": "7.10"
     },
     {
       "executableBuild": "183877",
-      "version": "7.11",
       "family": "Forsaken",
       "gogPublishedAt": "2026-10-29T17:16:02Z",
-      "notesUrl": "https://www.nomanssky.com/2026/10/forsaken-7-11/"
+      "notesUrl": "https://www.nomanssky.com/2026/10/forsaken-7-11/",
+      "version": "7.11"
     },
     {
       "executableBuild": "184271",
-      "version": "7.13",
       "family": "Forsaken",
       "gogPublishedAt": "2026-11-02T16:20:22Z",
-      "notesUrl": "https://www.nomanssky.com/2026/11/forsaken-7-13/"
+      "notesUrl": "https://www.nomanssky.com/2026/11/forsaken-7-13/",
+      "version": "7.13"
     },
     {
       "executableBuild": "185034",
-      "version": "7.14",
       "family": "Forsaken",
-      "gogPublishedAt": "2026-11-09T12:56:01Z"
+      "gogPublishedAt": "2026-11-09T12:56:01Z",
+      "version": "7.14"
+    },
+    {
+      "executableBuild": "186686",
+      "family": "HolidayExpeditions2026",
+      "gogPublishedAt": "2026-11-25T10:54:29Z",
+      "version": "7.15"
     }
-  ]
+  ],
+  "exactBuilds": {
+    "186923": {
+      "family": "HolidayExpeditions2026",
+      "gogPublishedAt": "2026-11-25T15:51:32Z",
+      "version": "7.15.1"
+    }
+  },
+  "namespace": "nms.gog.windows.exe",
+  "schemaVersion": 2
 }
